@@ -1,4 +1,5 @@
 #include "i_matrix.h"
+#include "matrix.h"
 #include <cassert>
 
 void test_integer_matrix() {
@@ -42,4 +43,7 @@ void test_integer_matrix() {
 
 int main() {
     test_integer_matrix();
+
+    Matrix<std::string> matrix = Matrix<std::string>(2, 2);
+    matrix.print();
 }

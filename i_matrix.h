@@ -1,22 +1,8 @@
-#include <vector>
-#include <iostream>
-
 #ifndef HANDIN5_I_MATRIX_H
 #define HANDIN5_I_MATRIX_H
 
-class IMatrixIndexOutOfBoundsException : public std::exception {
-public:
-    char * what() {
-        return "Index out of bounds";
-    }
-};
-
-class IMatrixNotSameDimensionException : public std::exception {
-public:
-    char * what() {
-        return "Index out of bounds";
-    }
-};
+#include <vector>
+#include <iostream>
 
 class IMatrix {
 private:
@@ -27,8 +13,6 @@ private:
 public:
     void Move(int x, int y);
     IMatrix(int n, int m);
-
-    // Operators
     IMatrix& operator=(const IMatrix& other); // assignment
     IMatrix(const IMatrix& other);            // copy
     IMatrix(IMatrix&& other);                 // move
@@ -47,7 +31,5 @@ public:
     // Methods used for easier testing
     void set_all_values_to(int value);
 };
-
-std::ostream& operator<<(std::ostream& os, const IMatrix&);
 
 #endif //HANDIN5_I_MATRIX_H

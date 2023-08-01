@@ -1,4 +1,5 @@
 #include "i_matrix.h"
+#include "exceptions.h"
 
 template <typename T>
 struct Multiply {
@@ -156,13 +157,13 @@ void IMatrix::set_all_values_to(int value) {
 void IMatrix::check_out_of_bounds(int n, int m) const {
     bool is_out_of_bounds = n >= this->n || m >= this->m;
     if (is_out_of_bounds)
-        throw IMatrixIndexOutOfBoundsException();
+        throw MatrixIndexOutOfBoundsException();
 }
 
 void IMatrix::check_is_same_dimension(IMatrix m) const {
     bool not_same_dimension = this->n != m.n || this->m != m.m;
 
     if (not_same_dimension)
-        throw IMatrixNotSameDimensionException();
+        throw MatrixNotSameDimensionException();
 }
 
