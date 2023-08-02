@@ -14,7 +14,7 @@ private:
     void check_out_of_bounds(int n, int m) const;
     void check_is_same_dimension(Matrix m) const;
 public:
-    void Move(int x, int y);
+    void Move(int from_row, int from_column, int to_row, int to_column);
     Matrix(int n, int m);
     Matrix& operator=(const Matrix& other); // assignment
     Matrix(const Matrix& other);            // copy
@@ -24,7 +24,7 @@ public:
     Matrix operator*(const Matrix& m1);     // times
     Matrix operator/(const Matrix& m1);     // division
     Matrix operator%(const Matrix& m1);     // modulo
-    int& operator()(int x, int y);            // subscript
+    T& operator()(int x, int y);            // subscript
 
     // General methods
     std::vector<T> Row(int n);
@@ -34,6 +34,18 @@ public:
     // Methods used for easier testing
     void set_all_values_to(T value);
 };
+
+template<typename T>
+void Matrix<T>::Move(int from_row, int from_column, int to_row, int to_column) {
+    this->matrix[to_row][to_column] = this->matrix[from_row][from_column];
+    this->matrix[from_row][from_column] = T{};
+}
+
+template<typename T>
+T &Matrix<T>::operator()(int x, int y) {
+    this->check_out_of_bounds(x, y);
+    return this->matrix[x][y];
+}
 
 template<typename T>
 void Matrix<T>::check_is_same_dimension(Matrix m) const {

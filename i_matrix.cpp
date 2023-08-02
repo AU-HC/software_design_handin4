@@ -47,10 +47,6 @@ IMatrix::IMatrix(int n, int m) {
     this->m = m;
 }
 
-void IMatrix::Move(int x, int y) {
-    // TODO: implement
-}
-
 std::vector<int> IMatrix::Row(int n) {
     this->check_out_of_bounds(n, 0);
 
@@ -70,15 +66,20 @@ std::vector<int> IMatrix::Column(int m) {
 
 template <typename Oper>
 IMatrix perform_operation(IMatrix m1, IMatrix m2, Oper op) {
-    IMatrix result = IMatrix(3, 3);
+    IMatrix result = IMatrix(m1.get_n(), m1.get_n());
 
-    for (int i = 0; i != 3; ++i) {
-        for (int j = 0; j != 3; ++j) {
+    for (int i = 0; i != m1.get_n(); ++i) {
+        for (int j = 0; j != m1.get_m(); ++j) {
             result(i, j) = op(m1(i, j), m2(i, j));
         }
     }
 
     return result;
+}
+
+void IMatrix::Move(int from_row, int from_column, int to_row, int to_column) {
+    this->matrix[to_row][to_column] = this->matrix[from_row][from_column];
+    this->matrix[from_row][from_column] = 0;
 }
 
 IMatrix IMatrix::operator+(const IMatrix& m1) {
@@ -89,6 +90,18 @@ IMatrix IMatrix::operator+(const IMatrix& m1) {
 IMatrix IMatrix::operator-(const IMatrix& m1) {
     this->check_is_same_dimension(m1);
     return perform_operation(*this, m1, Subtraction<int>());
+}
+
+IMatrix IMatrix::operator*(int scalar) {
+    IMatrix result = IMatrix(this->n, this->m);
+
+    for (int i = 0; i != this->n; ++i) {
+        for (int j = 0; j != this->m; ++j) {
+            result.matrix[i][j] = this->matrix[i][j] * scalar;
+        }
+    }
+
+    return result;
 }
 
 IMatrix IMatrix::operator*(const IMatrix& m1) {
@@ -121,7 +134,6 @@ std::string IMatrix::to_string() {
 
 int& IMatrix::operator()(int x, int y) {
     this->check_out_of_bounds(x, y);
-
     return this->matrix[x][y];
 }
 
@@ -166,4 +178,5 @@ void IMatrix::check_is_same_dimension(IMatrix m) const {
     if (not_same_dimension)
         throw MatrixNotSameDimensionException();
 }
+
 

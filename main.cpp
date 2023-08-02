@@ -1,5 +1,6 @@
 #include "i_matrix.h"
 #include "matrix.h"
+#include "chess_piece.h"
 #include <cassert>
 
 void test_integer_matrix() {
@@ -41,9 +42,48 @@ void test_integer_matrix() {
     std::cout << "all tests passed";
 }
 
+Matrix<Chess_piece> setup_chessbord() {
+    Matrix<Chess_piece> board = Matrix<Chess_piece>(8, 8);
+
+    // Insert pawns
+    for (int i = 0; i != 8; ++i) {
+        board(1, i) = Chess_piece(false, Chess_piece_type::pawn);
+        board(6, i) = Chess_piece(true, Chess_piece_type::pawn);
+    }
+
+    // Insert rooks
+    board(0, 0) = Chess_piece(false, Chess_piece_type::rook);
+    board(0, 7) = Chess_piece(false, Chess_piece_type::rook);
+    board(7, 7) = Chess_piece(true, Chess_piece_type::rook);
+    board(7, 0) = Chess_piece(true, Chess_piece_type::rook);
+
+    // Insert bishops
+    board(0, 1) = Chess_piece(false, Chess_piece_type::knight);
+    board(0, 6) = Chess_piece(false, Chess_piece_type::knight);
+    board(7, 6) = Chess_piece(true, Chess_piece_type::knight);
+    board(7, 1) = Chess_piece(true, Chess_piece_type::knight);
+
+    // Insert knights
+    board(0, 2) = Chess_piece(false, Chess_piece_type::bishop);
+    board(0, 5) = Chess_piece(false, Chess_piece_type::bishop);
+    board(7, 5) = Chess_piece(true, Chess_piece_type::bishop);
+    board(7, 2) = Chess_piece(true, Chess_piece_type::bishop);
+
+    // Insert queens
+    board(0, 3) = Chess_piece(false, Chess_piece_type::queen);
+    board(7, 3) = Chess_piece(true, Chess_piece_type::queen);
+
+    // Insert kings
+    board(0, 4) = Chess_piece(false, Chess_piece_type::king);
+    board(7, 4) = Chess_piece(true, Chess_piece_type::king);
+
+    return board;
+}
+
 int main() {
     test_integer_matrix();
 
-    Matrix<std::string> matrix = Matrix<std::string>(2, 2);
-    matrix.print();
+    Matrix<Chess_piece> chessboard = setup_chessbord();
+    chessboard.Move(6, 4, 4, 4); // E4
+    chessboard.print();
 }
