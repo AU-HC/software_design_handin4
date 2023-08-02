@@ -1,40 +1,6 @@
 #include "i_matrix.h"
 #include "exceptions.h"
-
-template <typename T>
-struct Multiply {
-    T operator()(T a, T b) const {
-        return a * b;
-    }
-};
-
-template <typename T>
-struct Addition {
-    T operator()(T a, T b) const {
-        return a + b;
-    }
-};
-
-template <typename T>
-struct Subtraction {
-    T operator()(T a, T b) const {
-        return a - b;
-    }
-};
-
-template <typename T>
-struct Division {
-    T operator()(T a, T b) const {
-        return a / b;
-    }
-};
-
-template <typename T>
-struct Modulo {
-    T operator()(T a, T b) const {
-        return a % b;
-    }
-};
+#include "operations.h"
 
 IMatrix::IMatrix(int n, int m) {
     auto rows = std::vector<std::vector<int>>(n);
@@ -66,7 +32,7 @@ std::vector<int> IMatrix::Column(int m) {
 
 template <typename Oper>
 IMatrix perform_operation(IMatrix m1, IMatrix m2, Oper op) {
-    IMatrix result = IMatrix(m1.get_n(), m1.get_n());
+    IMatrix result = IMatrix(m1.get_n(), m1.get_m());
 
     for (int i = 0; i != m1.get_n(); ++i) {
         for (int j = 0; j != m1.get_m(); ++j) {
@@ -105,8 +71,20 @@ IMatrix IMatrix::operator*(int scalar) {
 }
 
 IMatrix IMatrix::operator*(const IMatrix& m1) {
-    this->check_is_same_dimension(m1);
-    return perform_operation(*this, m1, Multiply<int>());
+    if (this->n != m1.m || this->m != m1.n) {
+        throw MatrixNotSameDimensionException();
+    }
+
+    IMatrix result = IMatrix(this->n, m1.m);
+    for (int i = 0; i < this->n; ++i) {
+        for (int j = 0; j < m1.m; ++j) {
+            for (int k = 0; k < this->m; ++k) {
+                result.matrix[i][j] += this->matrix[i][k] * m1.matrix[k][j];
+            }
+        }
+    }
+
+    return result;
 }
 
 IMatrix IMatrix::operator/(const IMatrix& m1) {

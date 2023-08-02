@@ -38,8 +38,71 @@ void test_integer_matrix() {
             assert(value == 1);
         }
     }
+}
 
-    std::cout << "all tests passed";
+// Copied tests from IMatrix
+void test_general_int_matrix() {
+    Matrix<int> matrix = Matrix<int>(3, 3);
+    Matrix<int> matrix_two = Matrix<int>(3, 3);
+
+    // testing that subscript works
+    matrix(0, 0) = 1;
+    assert(matrix(0,0) == 1);
+
+    // testing that column works
+    matrix(0, 0) = 1; matrix(1, 0) = 1; matrix(2, 0) = 1;
+    for (int i : matrix.Column(0))
+        assert(i == 1);
+
+    // testing that row works
+    matrix(0, 0) = 2; matrix(0, 1) = 2; matrix(0, 2) = 2;
+    for (int i : matrix.Row(0))
+        assert(i == 2);
+
+    matrix.set_all_values_to(3);
+    matrix_two.set_all_values_to(2);
+    Matrix plus_matrix = matrix + matrix_two;
+    for (int i = 0; i != plus_matrix.get_n(); ++i) {
+        for (int value : plus_matrix.Column(0)) {
+            assert(value == 5);
+        }
+    }
+
+    Matrix minus_matrix = matrix - matrix_two;
+    for (int i = 0; i != minus_matrix.get_n(); ++i) {
+        for (int value : minus_matrix.Column(0)) {
+            assert(value == 1);
+        }
+    }
+
+    matrix.set_all_values_to(2);
+    matrix_two.set_all_values_to(2);
+    Matrix multiply_matrix = matrix * matrix_two;
+    for (int i = 0; i != multiply_matrix.get_n(); ++i) {
+        for (int value : multiply_matrix.Column(0)) {
+            assert(value == 12);
+        }
+    }
+
+    matrix.set_all_values_to(5);
+    Matrix scalar_matrix = matrix * 2;
+    for (int i = 0; i != scalar_matrix.get_n(); ++i) {
+        for (int value : scalar_matrix.Column(0)) {
+            assert(value == 10);
+        }
+    }
+
+    matrix.set_all_values_to(5);
+    Matrix plus_int_matrix = matrix + 2;
+    for (int i = 0; i != plus_int_matrix.get_n(); ++i) {
+        for (int value : plus_int_matrix.Column(0)) {
+            assert(value == 7);
+        }
+    }
+}
+
+void test_general_string_matrix() {
+
 }
 
 Matrix<Chess_piece> setup_chessboard() {
@@ -82,13 +145,12 @@ Matrix<Chess_piece> setup_chessboard() {
 
 int main() {
     test_integer_matrix();
+    test_general_int_matrix();
+    test_general_string_matrix();
+
+    std::cout << "all tests passed\n\nPrinting chessboard and moving piece";
 
     Matrix<Chess_piece> chessboard = setup_chessboard();
     chessboard.Move(6, 4, 4, 4); // E4
     chessboard.print();
-
-    Matrix<int> integers = Matrix<int>(5, 5);
-    integers(0,0) = 15;
-    auto two_integers = integers % 4;
-    two_integers.print();
 }
