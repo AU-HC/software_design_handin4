@@ -42,7 +42,7 @@ void test_integer_matrix() {
     std::cout << "all tests passed";
 }
 
-Matrix<Chess_piece> setup_chessbord() {
+Matrix<Chess_piece> setup_chessboard() {
     Matrix<Chess_piece> board = Matrix<Chess_piece>(8, 8);
 
     // Insert pawns
@@ -83,7 +83,12 @@ Matrix<Chess_piece> setup_chessbord() {
 int main() {
     test_integer_matrix();
 
-    Matrix<Chess_piece> chessboard = setup_chessbord();
+    Matrix<Chess_piece> chessboard = setup_chessboard();
     chessboard.Move(6, 4, 4, 4); // E4
     chessboard.print();
+
+    Matrix<int> integers = Matrix<int>(5, 5);
+    integers(0,0) = 15;
+    auto two_integers = integers % 4;
+    two_integers.print();
 }

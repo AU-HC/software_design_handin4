@@ -6,6 +6,35 @@
 #include <iostream>
 #include "exceptions.h"
 
+template<typename T, typename U>
+concept addition = requires (T a, U b) {
+    { a + b } -> std::same_as<T>;
+    { b + a } -> std::same_as<T>;
+};
+
+template<typename T, typename U>
+concept subtraction = requires (T a, U b) {
+    { a - b } -> std::same_as<T>;
+    { b - a } -> std::same_as<T>;
+};
+
+template<typename T, typename U>
+concept multiplication = requires (T a, U b) {
+    { a * b } -> std::same_as<T>;
+    { b * a } -> std::same_as<T>;
+};
+
+template<typename T, typename U>
+concept division = requires (T a, U b) {
+    { a / b } -> std::same_as<T>;
+    { b / a } -> std::same_as<T>;
+};
+
+template<typename T, typename U = int>
+concept modulo = requires (T a, U b) {
+    { a % b } -> std::same_as<T>;
+};
+
 template <typename T>
 class Matrix {
 private:
@@ -19,11 +48,27 @@ public:
     Matrix& operator=(const Matrix& other); // assignment
     Matrix(const Matrix& other);            // copy
     Matrix(Matrix&& other);                 // move
-    Matrix operator+(const Matrix& m1);     // plus
-    Matrix operator-(const Matrix& m1);     // minus
-    Matrix operator*(const Matrix& m1);     // times
-    Matrix operator/(const Matrix& m1);     // division
-    Matrix operator%(const Matrix& m1);     // modulo
+
+    template<typename U>
+    requires addition<T,U>
+    Matrix<T> operator+(const Matrix<U>& m1);     // plus
+
+    template<typename U>
+    requires addition<T,U>
+    Matrix<T> operator-(const Matrix<U>& m1);     // minus
+
+    template<typename U>
+    requires multiplication<T,U>
+    Matrix<T> operator*(const Matrix<U>& m1);     // times
+
+    template<typename U>
+    requires division<T,U>
+    Matrix<T> operator/(const Matrix<U>& m1);     // division
+
+    template<typename U = int>
+    requires modulo<T,U>
+    Matrix<T> operator%(int value);     // modulo
+
     T& operator()(int x, int y);            // subscript
 
     // General methods
@@ -34,6 +79,28 @@ public:
     // Methods used for easier testing
     void set_all_values_to(T value);
 };
+
+template<typename T>
+template<typename U>
+requires modulo<T, U>
+Matrix<T> Matrix<T>::operator%(int value) {
+    Matrix result = Matrix(this->n, this->m);
+
+    for (int i = 0; i != this->n; ++i) {
+        for (int j = 0; j != this->m; ++j) {
+            result.matrix[i][j] = this->matrix[i][j] % value;
+        }
+    }
+
+    return result;
+}
+
+template<typename T>
+template<typename U>
+requires addition<T, U>
+Matrix<T> Matrix<T>::operator+(const Matrix<U> &m1) {
+    return Matrix<T>(0, 0);
+}
 
 template<typename T>
 void Matrix<T>::Move(int from_row, int from_column, int to_row, int to_column) {
