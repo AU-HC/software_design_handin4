@@ -24,7 +24,7 @@ public:
     Matrix(int n, int m);
     Matrix& operator=(const Matrix& other); // assignment
     Matrix(const Matrix& other);            // copy
-    Matrix(Matrix&& other);                 // move
+    Matrix(Matrix&& other) noexcept ;       // move
 
     template<typename U>
     requires addition<T,U>
@@ -65,8 +65,8 @@ public:
     std::vector<T> Column(int m);
     void print();
     void check_is_same_dimension(int n, int m);
-    int get_n() { return _n; }
-    int get_m() { return _m; }
+    [[nodiscard]] int get_n() const { return _n; }
+    [[nodiscard]] int get_m() const { return _m; }
 
     // Methods used for easier testing
     void set_all_values_to(T value);
@@ -75,17 +75,41 @@ public:
 };
 
 template<typename T>
+Matrix<T>::Matrix(Matrix &&other) noexcept {
+    this->matrix = other.matrix; // assign data members from the source object to the object that is being constructed
+    this->matrix = std::vector<std::vector<T>>(); // assign data of the source object to default values
+    this->_n = 0;
+    this->_m = 0;
+}
+
+template<typename T>
+Matrix<T>::Matrix(const Matrix &other) {
+    this->matrix = other.matrix;
+    this->m = other.m;
+    this->n = other.n;
+}
+
+template<typename T>
+Matrix<T> &Matrix<T>::operator=(const Matrix &other) {
+    this->matrix = other.matrix;
+    this->_n = other._n;
+    this->_m = other._m;
+
+    return *this;
+}
+
+template<typename T>
 template<typename U>
 requires subtraction<T, U>
 Matrix<T> Matrix<T>::operator-(Matrix<U> &m1) {
-    return this->perform_generic_operation_on_matrices(m1, SubtractionTwo<T, U>());
+    return this->perform_generic_operation_on_matrices(m1, Subtraction<T, U>());
 }
 
 template<typename T>
 template<typename U>
 requires subtraction<T, U>
 Matrix<T> Matrix<T>::operator-(U value) {
-    return this->perform_generic_operation_with_value(value, SubtractionTwo<T, U>());
+    return this->perform_generic_operation_with_value(value, Subtraction<T, U>());
 }
 
 template<typename T>
@@ -111,14 +135,14 @@ template<typename T>
 template<typename U>
 requires multiplication<T, U>
 Matrix<T> Matrix<T>::operator*(U value) {
-    return this->perform_generic_operation_with_value(value, MultiplyTwo<T, U>());
+    return this->perform_generic_operation_with_value(value, Multiply<T, U>());
 }
 
 template<typename T>
 template<typename U>
 requires division<T, U>
 Matrix<T> Matrix<T>::operator/(U value) {
-    return this->perform_generic_operation_with_value(value, DivisionTwo<T, U>());
+    return this->perform_generic_operation_with_value(value, Division<T, U>());
 }
 
 template<typename T>
@@ -132,14 +156,14 @@ template<typename T>
 template<typename U>
 requires addition<T, U>
 Matrix<T> Matrix<T>::operator+(U value) {
-    return this->perform_generic_operation_with_value(value, AdditionTwo<T, U>());
+    return this->perform_generic_operation_with_value(value, Addition<T, U>());
 }
 
 template<typename T>
 template<typename U>
 requires addition<T, U>
 Matrix<T> Matrix<T>::operator+(Matrix<U> &m1) {
-    return this->perform_generic_operation_on_matrices(m1, AdditionTwo<T, U>());
+    return this->perform_generic_operation_on_matrices(m1, Addition<T, U>());
 }
 
 template<typename T>

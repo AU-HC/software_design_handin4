@@ -11,14 +11,14 @@ concept addition = requires (T a, U b) {
 
 template<typename T, typename U>
 concept subtraction = requires (T a, U b) {
-    { a - b } -> std::same_as<T>;
-    { b - a } -> std::same_as<T>;
+    { a - b } -> std::convertible_to<T>;
+    { b - a } -> std::convertible_to<T>;
 };
 
 template<typename T, typename U>
 concept multiplication = requires (T a, U b) {
-    { a * b } -> std::same_as<T>;
-    { b * a } -> std::same_as<T>;
+    { a * b } -> std::convertible_to<T>;
+    { b * a } -> std::convertible_to<T>;
 };
 
 template<typename T, typename U>
@@ -29,7 +29,7 @@ concept division = requires (T a, U b) {
 
 template<typename T, typename U = int>
 concept modulo = requires (T a, U b) {
-    { a % b } -> std::same_as<T>;
+    { a % b } -> std::convertible_to<T>;
 };
 
 #endif //HANDIN5_CONCEPTS_H
